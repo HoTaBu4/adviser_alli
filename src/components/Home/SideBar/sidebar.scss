@@ -1,0 +1,42 @@
+.aside {
+  box-sizing: border-box;
+  max-width: 420px;
+  position: absolute;
+  top: 0;
+  left: -100%; /* Схований сайдбар */
+  transition: left 0.3s ease-in-out; /* Анімація руху */
+  height: 100%;
+  background-image: url("/public/pictures/images/sideBar.png");
+  object-fit: contain;
+  width: 100%;
+  border-radius:  0 10px 10px 0;
+  padding: 120px 38px 0 38px;
+  &__back {
+  }
+
+  &__request {
+  }
+
+  &__title {
+    color: white;
+  }
+
+  &__container {
+    padding: 0 50px;
+    color: white;
+  }
+
+  &__saved {
+  }
+}
+
+.aside.open {
+  left: 0;
+}
+
+@media(min-width:900px) {
+  .aside {
+    position: static;
+    height: 100%;
+  }
+}
