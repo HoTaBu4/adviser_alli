@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory} from "vue-router";
 import Authentication from "../components/Authentication/Authentication.vue";
 import Start from "../components/Main/start/Start.vue";
 import Home from "../components/Home/Home.vue";
@@ -12,7 +12,7 @@ const routes = [
     children: [
       { path: "", name: "default", component: Start },
       {
-        path: "Authentication",
+        path: "Authentication/:type",
         name: "authentication",
         component: Authentication,
       },
@@ -22,7 +22,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory("/"),
+  history: createWebHashHistory(),
   routes,
 });
 

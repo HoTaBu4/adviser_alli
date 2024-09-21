@@ -17,9 +17,23 @@
   align-items: center;
 }
 
+@mixin container {
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  @media (min-width: 699px) {
+    padding: 0 50px;
+    max-width: 1512px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 1300px) {
+    padding: 0 120px;
+  }
+}
 
 @mixin h1 {
-  font-family: inter,sans-serif;
+  font-family: inter, sans-serif;
   font-weight: 300;
   font-size: 50px;
   line-height: 60px;

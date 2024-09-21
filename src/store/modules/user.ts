@@ -2,34 +2,34 @@ import { Module } from "vuex";
 import { RootState } from "../store";
 import { UserState } from "../types/UserType";
 
+
 const state: UserState = {
-  name: "",
-  email: "",
+  user: {
+    name: '',
+    email: '',
+    isGuest: true,
+  },
 };
 
 const getters = {
-  userName: (state: UserState) => state.name,
-  userEmail: (state: UserState) => state.email,
+  getUser: (state: UserState) => state.user,
 };
 
 const mutations = {
-  setName(state: UserState, name: string) {
-    state.name = name;
-  },
-  setEmail(state: UserState, email: string) {
-    state.email = email;
+  setUser(state: UserState, user: Partial<UserState>) {
+    state.user = { ...state.user, ...user };
   },
 };
 
+// Actions to commit mutations
 const actions = {
-  updateUserName({ commit }: any, name: string) {
-    commit("setName", name);
-  },
-  updateUserEmail({ commit }: any, email: string) {
-    commit("setEmail", email);
+  // Action to set or update the user object
+  updateUser({ commit }: any, user: Partial<UserState>) {
+    commit("setUser", user);
   },
 };
 
+// Exporting the module as a Vuex module
 const user: Module<UserState, RootState> = {
   namespaced: true,
   state,

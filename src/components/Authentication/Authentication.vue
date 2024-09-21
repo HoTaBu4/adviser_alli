@@ -1,41 +1,111 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useLanguage } from "../../assets/hooks/useLanguage";
+import { Languages } from "../../store/types/LanguageType";
+import InputField from "../CommonComponents/InputField/InputField.vue";
+import { FieldsTypes } from "../../assets/types/fieldTypes";
+// import { loginUser, registerUser } from "../../api/user/user";
+import { AuthenticationTypes } from "../../assets/types/AuthenticationType";
 
 const data = reactive({
   email: {
     text: "",
     error: "",
+    valid: false,
   },
   password: {
     text: "",
     error: "",
+    valid: false,
   },
+  username: {
+    text: "",
+    error: "",
+    valid: false,
+  }
 });
 
-const isLoading = ref(false);
-const isEmailValid = ref(false);
+const router = useRouter();
+const route = useRoute();
+const { language } = useLanguage();
 
-const handleSubmit = (event: Event) => {
-  event.preventDefault();
+const isLogin = ref(false);
+const currentField = ref(FieldsTypes.email);
+const lastField = ref(FieldsTypes.email);
 
-  if (!isEmailValid.value) {
-    validateEmail();
-  } else {
-    validatePassword();
+const fieldOrder = [FieldsTypes.email, FieldsTypes.password, FieldsTypes.username];
+
+if (route.params.type === 'login') {
+  isLogin.value = true;
+} else if (route.params.type === 'register') {
+  isLogin.value = false;
+}
+
+const goToNextField = (nextField: FieldsTypes) => {
+  lastField.value = currentField.value;
+  currentField.value = nextField;
+};
+
+const goToPreviousField = () => {  
+  let currentIndex = fieldOrder.indexOf(currentField.value);
+
+  if (currentIndex > 0) {
+    // Set current field as invalid
+    currentField.value = fieldOrder[currentIndex - 1];
+    data[currentField.value].valid = false;
+    
+    // Move to the previous field
+    lastField.value = currentField.value; 
+    
   }
 };
 
+const goToHome = () => {
+  router.push({ name: "Home" });
+};
+
+const handleSubmit = () => {
+  // if (!isLogin.value) {
+  //   // Registration process
+  //   registerUser({email: data.email.text, password: data.password.text, username: data.username.text}).then(() => console.log(data));
+  // } else {
+  //   // Login process
+  //   loginUser({email: data.email.text, password: data.password.text});
+  // }
+  goToHome()
+}
+
+const MainValidation = (event: Event) => {
+  
+  event.preventDefault();
+  if (!data.email.valid) {
+    validateEmail();
+    return
+  } else if (!data.password.valid) {
+    validatePassword();
+    return
+  } else if (!isLogin && !data.username.valid){
+    validateUserName();
+  }
+  
+  handleSubmit();  
+};
+
 const validateEmail = () => {
-  const emailRegex =
-    /^([A-Za-z0-9_\-\.])+@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+  const emailRegex = /^([A-Za-z0-9_\-\.])+@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
   data.email.error = "";
 
-  // Email validation
   if (!emailRegex.test(data.email.text)) {
-    data.email.error = "Invalid email format";
+    data.email.error =
+      language.value === Languages.us
+        ? "Invalid email format"
+        : "Недійсний формат пошти";
   } else {
-    isEmailValid.value = true;
+    data.email.valid = true;
+    goToNextField(FieldsTypes.password);
+    data.email.valid = true;
   }
 };
 
@@ -43,66 +113,96 @@ const validatePassword = () => {
   data.password.error = "";
 
   if (data.password.text.length < 8 || data.password.text.length > 30) {
-    data.password.error = "8 - 30 characters";
+    data.password.error =
+      language.value === Languages.us
+        ? "8 - 30 characters"
+        : "8 - 30 знаків";
+  } else {
+    data.password.valid = true;
+    if (!isLogin.value) {
+      goToNextField(FieldsTypes.username);
+    }
+    
   }
+};
 
-  // If both fields are valid, proceed with form submission logic
-  if (!data.password.error) {
+const validateUserName = () => {
+  data.username.error = "";
+
+  if (data.username.text.length < 4 || data.username.text.length > 15) {
+    data.username.error =
+      language.value === Languages.us
+        ? "4 - 15 characters"
+        : "4 - 15 знаків";
+  } else {
+    data.username.valid = true;
   }
 };
 </script>
+
 
 <template>
   <div class="authentication">
     <div class="authentication__container">
       <form class="authentication__form">
-        <div
-          class="authentication__email-block"
-          :class="{ 'slide-out-left': isEmailValid, visible: !isEmailValid }"
+        <InputField 
+          :name="FieldsTypes.email"
+          v-model="data.email.text" 
+          :error="data.email.error"
+          :placeholder="language === Languages.us ? 'Email': 'Пошта'"
+          :isValid="data.email.valid"
+          :currentField
+          :lastField="lastField"
+          :labelText="Languages.us ? 'Email address': 'електронна пошта'" 
+        />
+        <InputField
+          :name="FieldsTypes.password"
+          v-model="data.password.text" 
+          :error="data.password.error"
+          :placeholder="language === Languages.us ? 'password': 'пароль'"
+          :isValid="data.password.valid"
+          :currentField
+          :lastField="lastField"
+          :labelText="Languages.us ? 'password': 'пароль'"
+        />
+        <InputField
+          v-if="!isLogin"
+          :name="FieldsTypes.username"
+          v-model="data.username.text"
+          :error="data.username.error"
+          :placeholder="language === Languages.us ? 'username': `ім&#39я користувача`"
+          :isValid="data.username.valid"
+          :currentField
+          :lastField="lastField"
+          :labelText="language === Languages.us ? 'username': `ім&#39я користувача`"
+        />
+        <button
+          v-if="currentField !== FieldsTypes.email"
+          type="button"
+          class="back_button"
+          @click="goToPreviousField"
+          style="margin-top: 100px;"
         >
-          <label
-            for="name"
-            class="authentication__email"
-            :class="{ 'authentication__label--error': data.email.error }"
-          >
-            {{ data.email.error ? data.email.error : "Email" }}
-          </label>
-          <input
-            type="text"
-            class="authentication__email--input"
-            placeholder="Email"
-            name="name"
-            v-model="data.email.text"
-            :class="{ 'authentication__input--error': data.email.error }"
-          />
-        </div>
-        <div
-          class="authentication__password-block"
-          :class="{ 'slide-in-right': isEmailValid, hidden: !isEmailValid }"
-        >
-          <label
-            for="name"
-            class="authentication__password"
-            :class="{ 'authentication__label--error': data.password.error }"
-          >
-            8 - 30 symbols
-          </label>
-          <input
-            type="text"
-            class="authentication__password--input"
-            :class="{ 'authentication__input--error': data.password.error }"
-            placeholder="Password"
-            v-model="data.password.text"
-            name="name"
-          />
-        </div>
-        <button class="authentication__button" @click="handleSubmit">
-          continue
+          {{ language === Languages.us ? "Back" : "Назад" }}
+        </button>
+        <button class="authentication__button" @click="MainValidation">
+          {{ language === Languages.uk ? "continue" : "продовжити" }}
         </button>
       </form>
-      <div class="authentication__register-block">
-        <div class="authentication__register-text">don`t have an accaunt</div>
-        <a href="" class="authentication__register-link">register</a>
+      <div class="authentication__register-block" v-if="isLogin">
+        <div
+          class="authentication__register-text" 
+          
+          replace
+        >
+          don`t have an accaunt
+        </div>
+        <RouterLink 
+          :to="{ name: 'authentication', params: { type: AuthenticationTypes.register }}" 
+          class="authentication__register-link"
+        >
+          {{ language === Languages.uk ? "register" : "зареєстуватися"}}
+        </RouterLink>
       </div>
       <div class="authentication__or">
         <div class="authentication__or--line"></div>
@@ -112,15 +212,27 @@ const validatePassword = () => {
       <div class="authentication__social-neworks">
         <button class="authentication__facebook">
           <img src="/pictures/icons/facebook__icon.svg" alt="" />
-          Register with Facebook
+          {{
+            language === Languages.uk
+              ? "Register with Facebook"
+              : "зареєструватися з Facebook"
+          }}
         </button>
         <button class="authentication__google">
           <img src="/pictures/icons/google__icon.svg" alt="" />
-          Register with Google
+          {{
+            language === Languages.uk
+              ? "Register with Google"
+              : "зареєструватися з Google"
+          }}
         </button>
         <button class="authentication__iphone">
           <img src="/public/pictures/icons/apple__icon.svg" alt="" />
-          Register with Apple
+          {{
+            language === Languages.uk
+              ? "Register with Apple"
+              : "зареєструватися з Apple"
+          }}
         </button>
       </div>
     </div>

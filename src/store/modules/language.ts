@@ -1,9 +1,9 @@
 import { Module } from "vuex";
 import { RootState } from "../store";
-import { LanguageState } from "../types/LanguageType";
+import { Languages, LanguageState } from "../types/LanguageType";
 
 const state: LanguageState = {
-  currentLanguage: "en",
+  currentLanguage: Languages.us,
 };
 
 const getters = {
@@ -17,7 +17,7 @@ const mutations = {
 };
 
 const actions = {
-  updateLanguage({ commit }: any, language: string) {
+  updateLanguage({ commit }: any, language: string = Languages.us) {
     commit("setLanguage", language);
   },
 };

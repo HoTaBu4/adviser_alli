@@ -1,24 +1,22 @@
 <script setup lang="ts">
 defineProps({
   isOpenSidebar: {
-    type: Boolean
-  }
-})
+    type: Boolean,
+  },
+});
 
-const emit = defineEmits(['toggle-sidebar']);
+const emit = defineEmits(["toggle-sidebar"]);
 
 const toggleSidebar = () => {
-  emit('toggle-sidebar');
+  emit("toggle-sidebar");
 };
-
 </script>
 
 <template>
   <svg
     class="ham hamRotate ham1"
-    :class="{'active' : isOpenSidebar}"
+    :class="{ active: isOpenSidebar }"
     viewBox="0 0 100 100"
-    width="80"
     @click="toggleSidebar"
   >
     <path

@@ -1,16 +1,22 @@
 <script lang="ts" setup>
-import Burger from "./Burger/Burger.vue";
+import { ref } from "vue";
+import { Languages } from "../../../store/types/LanguageType";
+import { useLanguage } from "../../../assets/hooks/useLanguage";
+import Burger from "../Burger/Burger.vue";
 
 defineProps({
   home: {
     type: Boolean,
   },
 });
-const user = false;
+
+const user = ref(false);
+
+const { language } = useLanguage();
 </script>
 
 <template>
-  <header class="header">
+  <header class="header container">
     <div class="header__icon">
       <img
         src="/pictures/icons/main__logo_phone.png"
@@ -25,14 +31,20 @@ const user = false;
       <div class="header__icon-text">Elli.ai</div>
     </div>
     <div class="header__info" v-if="!home">
-      <div class="header__info--text">FRESH</div>
+      <div class="header__info--text">
+        {{ language === Languages.uk ? "FRESH" : "СВІЖИЙ" }}
+      </div>
       <div class="header__info--line"></div>
-      <div class="header__info--text">CONVINIENT</div>
+      <div class="header__info--text">
+        {{ language === Languages.uk ? "CONVINIENT" : "ЗРУЧНИЙ" }}
+      </div>
       <div class="header__info--line"></div>
-      <div class="header__info--text">FAST</div>
+      <div class="header__info--text">
+        {{ language === Languages.uk ? "FAST" : "ШВИДКИЙ" }}
+      </div>
     </div>
     <div class="header__right-side">
-      <button class="header__log-in" v-if="user"></button>
+      <button class="header__log-in" v-if="user">{{language === Languages.uk ? 'log in' : 'зареєстуватися'}}</button>
       <Burger v-if="user" />
     </div>
   </header>

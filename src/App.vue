@@ -1,5 +1,19 @@
 <script setup lang="ts">
-import Header from "./components/CommonComponents/Header/Header.vue";
+import { useStore } from "vuex";
+import { Languages } from "./store/types/LanguageType";
+
+const browserNavigator = navigator;
+
+const store = useStore();
+
+if (
+  browserNavigator.language === Languages.uk ||
+  browserNavigator.language === Languages.us
+) {
+  store.dispatch("language/updateLanguage", browserNavigator.language);
+} else {
+  store.dispatch("language/updateLanguage");
+}
 </script>
 
 <template>

@@ -20,7 +20,7 @@
     }
 
     &--span {
-      color: #00C2FF;
+      color: #00c2ff;
     }
   }
 
@@ -82,6 +82,20 @@
     top: 70px;
     left: 50%;
     transform: translateX(-50%);
+    background: rgb(0, 194, 255);
+    background: linear-gradient(
+      90deg,
+      rgba(0, 194, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    backdrop-filter: blur(12px);
+
+    font-size: 17.5px;
+    font-family: Inter, sans-serif;
+    font-weight: 300;
+    line-height: 28px;
+    letter-spacing: 2px;
+    border-radius: 17.5px;
   }
 
   &__log-as-guest {
@@ -92,11 +106,12 @@
     transition: all ease 0.5s;
 
     &:hover {
-      color: #6E757C;
-      border-bottom: 1px solid #6E757C;
+      color: #6e757c;
+      border-bottom: 1px solid #6e757c;
     }
 
     &--svg {
+      cursor: pointer;
       &:hover {
         .buttons-container__log-as-guest--sign {
           fill: grey;
@@ -111,20 +126,17 @@
   }
 }
 
-//for modal window
-
-.modal-enter-active,
-.modal-leave-active {
-  transition: all 0.5s;
+.modal_info-enter-active,
+.modal_info-leave-active {
+  transition: opacity 0.5s ease;
 }
 
-.modal-enter,
-.modal-leave-to {
+.modal_info-enter-from,
+.modal_info-leave-to {
   opacity: 0;
 }
 
-@media(max-width:500px) {
-  
+@media (max-width: 500px) {
   .main {
     &__info {
       display: flex;
@@ -142,7 +154,7 @@
 
 @media (min-width: 699px) {
   .buttons-container {
-    max-width: 400px;
+    max-width: 700px;
   }
 }
 

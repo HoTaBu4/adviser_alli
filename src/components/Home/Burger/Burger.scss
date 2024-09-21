@@ -1,5 +1,6 @@
 .ham {
   cursor: pointer;
+  width: 50px;
   -webkit-tap-highlight-color: transparent;
   transition: transform 400ms;
   -moz-user-select: none;
@@ -33,4 +34,10 @@
 }
 .ham1.active .bottom {
   stroke-dashoffset: -138px;
+}
+
+@media (min-width: 699px) {
+  .ham {
+    width: 80px;
+  }
 }

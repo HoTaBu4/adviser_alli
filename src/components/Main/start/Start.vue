@@ -1,40 +1,65 @@
 <script lang="ts" setup>
 import { ref } from "vue";
+import { Languages } from "../../../store/types/LanguageType";
+import { useLanguage } from "../../../assets/hooks/useLanguage";
+import { AuthenticationTypes } from "../../../assets/types/AuthenticationType";
 
 const start = ref(false);
 const openModal = ref(false);
+
+const { language } = useLanguage();
+
 </script>
 
 <template>
   <div class="main__info" v-if="!start">
     <div class="main__text">
       <h1 class="main__text--h1">
-        An all-powerful <br/>
-        <span class="main__text--span">personal AI</span>
-        <br/> assistant right on <br/> your phone.
+        {{ language === Languages.uk ? "An all-powerful" : "Всесильний" }}
+        <br />
+        <span class="main__text--span">{{
+          language === Languages.uk ? "personal AI" : "особистий ШІ"
+        }}</span>
+        <br />
+        {{
+          language === Languages.uk ? "assistant right on" : "помічник прямо з"
+        }}
+        <br />
+        {{ language === Languages.uk ? "your phone" : "вашого телефону" }}
       </h1>
       <h2 class="main__text--h2">24/7</h2>
     </div>
-    <button class="main__button" @click="start = true">start now</button>
+    <button class="main__button" @click="start = true">
+      {{ language === Languages.uk ? "start now" : "почати зараз" }}
+    </button>
   </div>
   <div class="buttons-container" v-if="start">
-    <transition name="modal">
+    <transition name="modal_info">
       <div class="buttons-container__modal" v-if="openModal">
-        If you choose to log in as a guest, you won't have access to your search
-        history or saved recommendations.
+        {{
+          language === Languages.uk
+            ? "If you choose to log in as a guest, you won&#39;t have access to your search history or saved recommendations."
+            : "Якщо ви вирішите увійти як гість, ви не матимете доступу до свого пошуку історія або збережені рекомендації."
+        }}
       </div>
     </transition>
-    <h2 class="buttons-container__title">start</h2>
+    <h2 class="buttons-container__title">
+      {{ language === Languages.uk ? "start" : "почати " }}
+    </h2>
     <div class="buttons-container__buttons">
-      <RouterLink to="Authentication" class="buttons-container__log-in">
-        log in
+      <RouterLink :to="{ name: 'authentication', params: { type: AuthenticationTypes.login }}" class="buttons-container__log-in">
+        {{ language === Languages.uk ? "log in" : "ввійти" }}
       </RouterLink>
-      <RouterLink to="Authentication" class="buttons-container__register">
-        register
+      <RouterLink :to="{ name: 'authentication', params: { type: AuthenticationTypes.register }}" class="buttons-container__register">
+        {{ language === Languages.uk ? "register" : "зареєструватися" }}
       </RouterLink>
     </div>
     <div class="buttons-container__guest">
-      <a href="" class="buttons-container__log-as-guest">log as a guest</a>
+      <RouterLink to="home" class="buttons-container__log-as-guest">{{
+        language === Languages.uk
+          ? "log as a guest"
+          : "зайти як гість"
+      }}</RouterLink>
       <svg
         width="38"
         height="38"
