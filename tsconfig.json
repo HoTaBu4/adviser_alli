@@ -5,6 +5,7 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    "outDir": "./dist",
     "typeRoots": ["./node_modules/@types", "./types"],
     "allowJs": true, // Allow JavaScript files to be imported
     "checkJs": false, // Skip type checking on JavaScript files
