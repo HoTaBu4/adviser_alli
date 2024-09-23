@@ -9,5 +9,5 @@ export default defineConfig({
       "@": "/src",
     },
   },
-  base: '/allie.ia/'
+  base: '/adviser_alli/'
 });
