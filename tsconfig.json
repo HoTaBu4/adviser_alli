@@ -1,0 +1,19 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    "outDir": "./dist",
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "allowJs": true, // Allow JavaScript files to be imported
+    "checkJs": false, // Skip type checking on JavaScript files
+    "moduleResolution": "node", // Resolve modules like Node.js
+    "esModuleInterop": true, // Allow default imports from CommonJS modules
+    "target": "ES5", // or another target like ES6, ESNext
+    "lib": ["ES2015", "DOM"] // Include ES2015 or later to support Promise
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.js"],
+  "exclude": ["node_modules"]
+}
