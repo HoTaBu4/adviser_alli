@@ -1,9 +1,15 @@
 <script setup lang="ts">
-import { computed,ref } from "vue";
+import { computed, ComputedRef, onMounted,ref} from "vue";
 import { useLanguage } from "../../../assets/hooks/useLanguage";
 import { Languages } from "../../../store/types/LanguageType";
 import { useStore } from "vuex";
 import { RootState } from "../../../store/store";
+import { UserState } from "../../../store/types/UserType";
+import { fetchAllChats } from "../../../store/modules/chats";
+import { Chat } from "../../../store/types/ChatType";
+import SideBarItem  from "./../SideBarItem/SideBarItem.vue";
+import { getChatHistory, SelectedChatState } from "../../../store/modules/selectedChat";
+import { getSavedMessages, SavedMessagesState } from "../../../store/modules/savedMessages";
 
 defineProps({
   isOpenSidebar: {
@@ -12,15 +18,29 @@ defineProps({
   },
 });
 
-const isOpenSaved = ref(false);
-const isOpenRequest = ref(false);
+const isOpenSaved = ref(true);
+const isOpenRequest = ref(true);
 
 const { language } = useLanguage();
 
 const store = useStore<RootState>();
 
-const user = computed(() => store.state.user);
+const {user, isloading: isLoadingUser }: UserState = store.state.user;
+const chats: ComputedRef<Chat[]> = computed(() => store.state.chats.chats);
+const savedMessagesState: ComputedRef<SavedMessagesState> = computed(() => store.state.savedMessages);
+  const savedMessages = computed(() => savedMessagesState.value.savedMessages);
+  const isLoadingMessages = computed(() => savedMessagesState.value.isLoading);
 
+onMounted(() => {
+  if (!user.isGuest) {
+    fetchAllChats();
+    getSavedMessages();
+  } 
+
+  if (chats.value.length > 0 && !user.isGuest) {
+    getChatHistory(chats.value[0].id);
+  }
+})
 </script>
 
 <template>
@@ -47,15 +67,31 @@ const user = computed(() => store.state.user);
             :class="{ 'aside__arrow--isOpen': isOpenRequest }"
           />
         </div>
-        <div class="aside__container">
-          <div class="aside__red-notice" v-if="user.user.isGuest">
+        <div class="aside__container" >
+          <div class="aside__red-notice" v-if="user.isGuest" >
             {{
               language === Languages.uk
                 ? `Bи не можете отримати доступ до історії пошуку чи збережених рекомендацій, якщо ви увійшли як гість.`
                 : `You can&#39;t access your search history or saved recommendations since you logged in as a guest.`
             }}
           </div>
-          
+          <div class="aside__info" v-if="!user.isGuest && !isLoadingUser && chats.length === 0">
+            {{
+              language === Languages.uk
+                ? `ви немаєте покищо чатів`
+                : `You currently have no active chats.`
+            }}
+          </div>
+          <div 
+            class="aside__container--items"
+            v-if="!user.isGuest && !isLoadingUser && chats.length > 0"
+          >
+            <SideBarItem 
+              v-for="(chat) in chats" 
+              :key="chat.id" 
+              :chat="chat"
+            />
+          </div>
         </div>
       </div>
       <div
@@ -78,7 +114,7 @@ const user = computed(() => store.state.user);
           />
         </div>
         <div class="aside__container">
-          <div class="aside__red-notice" v-if="user.user.isGuest">
+          <div class="aside__red-notice" v-if="user.isGuest">
             {{
               language === Languages.uk
                 ? `Bи не можете отримати доступ до історії пошуку чи збережених рекомендацій, якщо ви увійшли як гість.`
@@ -86,6 +122,17 @@ const user = computed(() => store.state.user);
             }}
           </div>
         </div>
+        <div 
+            class="aside__container--items"
+            v-if="!user.isGuest && !isLoadingMessages"
+          >
+            <SideBarItem 
+              v-for="(item) in savedMessages" 
+              :key="item.id" 
+              :savedMessage="item"
+              :saved="true"
+            />
+          </div>
       </div>
     </div>
   </aside>

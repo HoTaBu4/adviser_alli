@@ -9,8 +9,22 @@ export const getAllChats = () => {
   return client.get('/chats/');
 }
 
-export const getSavedMassages = () => {
-  return client.get('/chats/saved',);
+export const delChat = (chatId: number) => {
+  return client.delete(`/chats/${chatId}/delete`);
 }
 
-// export const getChat
+export const delAllChats = () => {
+  return client.delete('/chats/delete/');
+}
+
+export const saveChatItem = (chatId: number) => {
+  return client.post(`/chats/${chatId}`,true);
+}
+
+export const unsaveChatItem = (chatId: number) => {
+  return client.post(`/chats/${chatId}`,false);
+}
+
+export const retrieveChat = (chatId: number) => {
+  return client.get(`/chats/${chatId}`);
+}

@@ -1,15 +1,16 @@
 <script setup lang="ts">
-import { reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useLanguage } from "../../assets/hooks/useLanguage";
 import { Languages } from "../../store/types/LanguageType";
 import InputField from "../CommonComponents/InputField/InputField.vue";
 import { FieldsTypes } from "../../assets/types/fieldTypes";
-// import { loginUser, registerUser } from "../../api/user/user";
 import { AuthenticationTypes } from "../../assets/types/AuthenticationType";
+import { authorizationUser, registationUser } from "../../store/modules/user";
+import store from "../../store/store";
 
-const data = reactive({
-  email: {
+let data = reactive({
+    email: {
     text: "",
     error: "",
     valid: false,
@@ -19,28 +20,60 @@ const data = reactive({
     error: "",
     valid: false,
   },
-  username: {
-    text: "",
-    error: "",
-    valid: false,
-  }
+  // username: {
+  //   text: "",
+  //   error: "",
+  //   valid: false,
+  // }
 });
 
-const router = useRouter();
 const route = useRoute();
+const router = useRouter();
+const user = store.state.user;
+const chats = store.state.chats
 const { language } = useLanguage();
 
 const isLogin = ref(false);
 const currentField = ref(FieldsTypes.email);
 const lastField = ref(FieldsTypes.email);
 
-const fieldOrder = [FieldsTypes.email, FieldsTypes.password, FieldsTypes.username];
+// const fieldOrder = [FieldsTypes.email, FieldsTypes.password, FieldsTypes.username];
+const fieldOrder = [FieldsTypes.email, FieldsTypes.password];
 
-if (route.params.type === 'login') {
-  isLogin.value = true;
-} else if (route.params.type === 'register') {
-  isLogin.value = false;
-}
+const resetFormData = () => {
+  data.email.text = "";
+  data.email.error = "";
+  data.email.valid = false;
+
+  data.password.text = "";
+  data.password.error = "";
+  data.password.valid = false;
+
+  // data.username.text = "";
+  // data.username.error = "";
+  // data.username.valid = false;
+};
+
+const setAuthType = (routeType: string) => {
+  if (routeType === 'login') {
+    isLogin.value = true;
+  } else if (routeType === 'register') {
+    isLogin.value = false;
+  }
+};
+
+setAuthType(route.params.type as string);
+
+watch(
+  () => route.params.type,
+  (newType) => {
+    setAuthType(newType as string);
+    currentField.value = FieldsTypes.email
+    lastField.value = FieldsTypes.email
+    resetFormData();
+  },
+  { immediate: true } 
+);
 
 const goToNextField = (nextField: FieldsTypes) => {
   lastField.value = currentField.value;
@@ -61,19 +94,21 @@ const goToPreviousField = () => {
   }
 };
 
-const goToHome = () => {
-  router.push({ name: "Home" });
-};
-
 const handleSubmit = () => {
-  // if (!isLogin.value) {
-  //   // Registration process
-  //   registerUser({email: data.email.text, password: data.password.text, username: data.username.text}).then(() => console.log(data));
-  // } else {
-  //   // Login process
-  //   loginUser({email: data.email.text, password: data.password.text});
-  // }
-  goToHome()
+  if (!isLogin.value) {
+    // Registration process
+    registationUser({
+      email: data.email.text,
+      password: data.password.text,
+      // username: data.username.text
+    })
+  } else {
+    // Login process
+    authorizationUser({
+      email: data.email.text,
+      password: data.password.text
+    },router)
+  }
 }
 
 const MainValidation = (event: Event) => {
@@ -84,10 +119,12 @@ const MainValidation = (event: Event) => {
     return
   } else if (!data.password.valid) {
     validatePassword();
-    return
-  } else if (!isLogin && !data.username.valid){
-    validateUserName();
-  }
+    // return
+  } 
+  // else if (!isLogin && !data.username.valid){
+  //   validateEmail();
+  //   return
+  // }
   
   handleSubmit();  
 };
@@ -117,27 +154,34 @@ const validatePassword = () => {
       language.value === Languages.us
         ? "8 - 30 characters"
         : "8 - 30 знаків";
+  } else if (data.password.text.slice(0,1) !== data.password.text.slice(0,1).toUpperCase()) {
+    data.password.error =
+      language.value === Languages.us
+        ? "1 - letter must be upperCase"
+        : "1 - перша літера має бути великою";
   } else {
     data.password.valid = true;
-    if (!isLogin.value) {
-      goToNextField(FieldsTypes.username);
-    }
-    
+    // if (!isLogin.value) {
+    //   goToNextField(FieldsTypes.username);
+    // }  
   }
 };
 
-const validateUserName = () => {
-  data.username.error = "";
+// const validateUserName = () => {
+//   data.username.error = "";
 
-  if (data.username.text.length < 4 || data.username.text.length > 15) {
-    data.username.error =
-      language.value === Languages.us
-        ? "4 - 15 characters"
-        : "4 - 15 знаків";
-  } else {
-    data.username.valid = true;
-  }
-};
+//   if (data.username.text.length < 4 || data.username.text.length > 15) {
+//     data.username.error =
+//       language.value === Languages.us
+//         ? "4 - 15 characters"
+//         : "4 - 15 знаків";
+//   } else {
+//     data.username.valid = true;
+//   }
+// };
+// onMounted(() => {
+//   logOutUser()
+// })
 </script>
 
 
@@ -164,8 +208,9 @@ const validateUserName = () => {
           :currentField
           :lastField="lastField"
           :labelText="Languages.us ? 'password': 'пароль'"
+          :isPassword="true"
         />
-        <InputField
+        <!-- <InputField
           v-if="!isLogin"
           :name="FieldsTypes.username"
           v-model="data.username.text"
@@ -175,33 +220,56 @@ const validateUserName = () => {
           :currentField
           :lastField="lastField"
           :labelText="language === Languages.us ? 'username': `ім&#39я користувача`"
-        />
+        /> -->
         <button
           v-if="currentField !== FieldsTypes.email"
           type="button"
-          class="back_button"
+          class="authentication__back-button"
           @click="goToPreviousField"
-          style="margin-top: 100px;"
         >
-          {{ language === Languages.us ? "Back" : "Назад" }}
+          <svg viewBox="0 0 14 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="authentication__back-button--svg">
+            <path 
+              class="authentication__back-button--path"
+              d="M0.486328 11.1289C0.486328 10.8691 0.595703 10.6367 0.800781 10.4453L9.93359 
+              1.28516C10.1934 1.02539 10.4258 0.929688 10.6719 0.929688C11.1914 0.929688 11.5879 
+              1.3125 11.5879 1.81836C11.5879 2.07812 11.5059 2.31055 11.3281 2.48828L7.24023 6.61719L3.20703 
+              10.3633L6.37891 10.2129H24.9727C25.4922 10.2129 25.875 10.5957 25.875 11.1289C25.875 11.6621 
+              25.4922 12.0449 24.9727 12.0449H6.37891L3.19336 11.8945L7.24023 15.6406L11.3281 19.7695C11.4922 
+              19.9336 11.5879 20.1797 11.5879 20.4258C11.5879 20.9316 11.1914 21.3145 10.6719 21.3145C10.4258 
+              21.3145 10.207 21.2324 10.002 21.041L0.800781 11.8125C0.595703 11.6211 0.486328 11.3887 
+              0.486328 11.1289Z" 
+              fill="#B1B0B4"
+            />
+          </svg>
+          <div class="authentication__back-button--text">
+            {{ language === Languages.us ? "Back" : "Назад" }}
+          </div>
         </button>
         <button class="authentication__button" @click="MainValidation">
-          {{ language === Languages.uk ? "continue" : "продовжити" }}
+          {{ language === Languages.us ? "continue" : "продовжити" }}
         </button>
       </form>
-      <div class="authentication__register-block" v-if="isLogin">
-        <div
-          class="authentication__register-text" 
-          
-          replace
-        >
-          don`t have an accaunt
+      <div class="authentication__register-block">
+        <div class="authentication__register-text" >
+          {{language === Languages.us ? `don&#39;t have an accaunt?` : 'немає акаунта?'}}
         </div>
+        <svg height="8" viewBox="0 0 54 8" fill="none" xmlns="http://www.w3.org/2000/svg" class="authentication__arrow-sign">
+          <path d="M53.3536 4.35355C53.5488 4.15829 53.5488 3.84171 53.3536 3.64645L50.1716 0.464466C49.9763 0.269204 49.6597 0.269204 49.4645 0.464466C49.2692 0.659728 49.2692 0.976311 49.4645 1.17157L52.2929 4L49.4645 6.82843C49.2692 7.02369 49.2692 7.34027 49.4645 7.53553C49.6597 7.7308 49.9763 7.7308 50.1716 7.53553L53.3536 4.35355ZM0 4.5H53V3.5H0V4.5Z" fill="#6E757C"/>
+        </svg>
+
         <RouterLink 
           :to="{ name: 'authentication', params: { type: AuthenticationTypes.register }}" 
           class="authentication__register-link"
+          v-if="route.params.type === 'login'"
         >
-          {{ language === Languages.uk ? "register" : "зареєстуватися"}}
+          {{ language === Languages.us ? "register" : "зареєстуватися"}}
+        </RouterLink>
+        <RouterLink 
+          :to="{ name: 'authentication', params: { type: AuthenticationTypes.login }}" 
+          class="authentication__register-link"
+          v-else
+        >
+          {{ language === Languages.us ? "login" : "зайти"}}
         </RouterLink>
       </div>
       <div class="authentication__or">
@@ -209,29 +277,28 @@ const validateUserName = () => {
         <div class="authentication__or--text">or</div>
         <div class="authentication__or--line"></div>
       </div>
-      <div class="authentication__social-neworks">
-        <button class="authentication__facebook">
-          <img src="/pictures/icons/facebook__icon.svg" alt="" />
-          {{
-            language === Languages.uk
-              ? "Register with Facebook"
-              : "зареєструватися з Facebook"
-          }}
-        </button>
+      <div class="authentication__social-networks">
         <button class="authentication__google">
-          <img src="/pictures/icons/google__icon.svg" alt="" />
+          <div>
+            <div id="g_id_onload"
+                :data-client_id="clientId"
+                data-callback="handleCredentialResponse"
+                data-auto_prompt="false">
+            </div>
+            <div class="g_id_signin" 
+                data-type="standard"
+                data-size="large"
+                data-theme="outline"
+                data-text="signin_with"
+                data-shape="rectangular"
+                data-logo_alignment="center">
+            </div>
+          </div>
+          <img src="/pictures/icons/google__icon.svg" alt="Google Icon" />
           {{
-            language === Languages.uk
+            language === Languages.us
               ? "Register with Google"
               : "зареєструватися з Google"
-          }}
-        </button>
-        <button class="authentication__iphone">
-          <img src="/public/pictures/icons/apple__icon.svg" alt="" />
-          {{
-            language === Languages.uk
-              ? "Register with Apple"
-              : "зареєструватися з Apple"
           }}
         </button>
       </div>

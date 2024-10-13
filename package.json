@@ -13,9 +13,13 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "jwt-decode": "^4.0.0",
+    "marked": "^14.1.2",
     "normalize.css": "^8.0.1",
     "vue-router": "^4.4.3",
-    "vuex": "^4.0.2"
+    "vue3-google-oauth2": "^1.0.7",
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.3",

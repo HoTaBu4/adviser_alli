@@ -3,5 +3,8 @@ import "./style.scss";
 import store from "./store/store";
 import App from "./App.vue";
 import routes from "./routes/routes";
+import 'vue3-google-oauth2'
 
-createApp(App).use(store).use(routes).mount("#app");
+const app = createApp(App);
+
+app.use(store).use(routes).mount("#app");

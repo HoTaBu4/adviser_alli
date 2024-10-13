@@ -4,6 +4,7 @@
   width: auto;
   color: white;
   gap: 14px;
+  word-wrap: break-word;
 
   &--ai {
     justify-content: flex-start; /* Align left for AI */
@@ -42,6 +43,19 @@
       line-height: 23px;
       background-color: #464c5f;
       border-radius: 16px;
+    }
+  }
+  &__svg {
+    stroke: white;
+    display: flex;
+    margin-left: auto;
+  }
+  &__path {
+    transition: all 0.5s ease;
+    fill: transparent;
+
+    &.is_saved {
+      fill: white;
     }
   }
 

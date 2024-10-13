@@ -8,7 +8,7 @@
     display: grid;
     grid-template: 1fr/ 1fr 1fr 1fr;
     justify-content: space-between;
-    overflow: hidden;
+    // overflow: hidden;
     padding: 0 24px;
   }
 
@@ -92,14 +92,72 @@
     width: 100%;
   }
 
+  &__start-chatting {
+    width: 100%;
+    @include center-element;
+  }
+
+  &__start-button {
+    height: 74px;
+    min-width: 280px;
+    border-radius: 50px;
+
+    font-family: inter, sans-serif;
+    font-size: 17px;
+    line-height: 21px;
+    letter-spacing: 3px;
+
+    @include defaulButton;
+  }
+
   &__form {
     &--textarea {
     }
   }
 }
 
+.profile {
+  position: relative;
+
+  &__menu {
+    position: absolute;
+    top: 30px;
+    left: -270px;
+    background: linear-gradient(-55deg, #092735, #092634, #092532, #0a2431, #0a2330, #0a222f, #0a212d, #0a202c);
+    padding: 18px;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    z-index: 1000;
+    border-radius: 16px 0px 16px 16px;
+    width: 270px;
+  }
+
+  &__menu-item {
+    padding: 12px 18px;
+    font-size: 17px;
+    font-family: Inter,sans-serif;
+    color: white;
+    font-weight: 300;
+    line-height: 28px;
+    letter-spacing: 3px;
+  }
+}
+
+.menu-enter-active,
+.menu-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.menu-enter-from,
+.menu-leave-to {
+  opacity: 0;
+}
+
 @media (min-width: 699px) {
   .home-header {
+    // height: 50px;
     &__container {
     }
 
