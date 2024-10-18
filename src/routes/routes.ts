@@ -1,8 +1,10 @@
-import { createRouter, createWebHashHistory} from "vue-router";
+import { createRouter, createWebHashHistory, createWebHistory} from "vue-router";
 import Authentication from "../components/Authentication/Authentication.vue";
 import Start from "../components/Main/start/Start.vue";
 import Home from "../components/Home/Home.vue";
 import Main from "../components/Main/Main.vue";
+import ForgotPassword from "../components/Home/ForgotPassword/ForgotPassword.vue";
+import LoadingGoogleUser from "../components/LoadingGoolgeUser/LoadingGoogleUser.vue";
 
 const routes = [
   {
@@ -19,10 +21,12 @@ const routes = [
     ],
   },
   { path: "/Home", name: "Home", component: Home },
+  { path: '/forgotPassword', name:'forgotPassword',component: ForgotPassword },
+  { path:'/google/loading', name: 'googleLoading',component: LoadingGoogleUser}
 ];
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory('/adviser_alli'),
   routes,
 });
 

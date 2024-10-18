@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { useStore } from "vuex";
 import SelectThemeItem from "../SelectThemeItem/SelectThemeItem.vue";
+import { SelectedChatState } from "../../../store/modules/selectedChat";
 
 const props = defineProps({
   isGuest: {
@@ -8,6 +10,7 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['selectTheme','setCloseSelectTheme'])
+const store = useStore();
 
 const themes = [
   { id: 1, name: 'Health', description: 'Fitness, sports, and nutrition' },
@@ -22,6 +25,7 @@ const handleClick = (theme: number) => {
   if (props.isGuest) {
     emit('selectTheme',theme, true );
   } else {
+    store.commit('selectedChat/resetChatAndSavedMessage')
     emit('selectTheme',theme);
   }
   

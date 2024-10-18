@@ -135,7 +135,7 @@ export const fetchAllChats = () => {
 
 export const deleteChat = (chatId: number) => {
   store.dispatch('chats/deleteChat', chatId);
-  store.commit('correctTheChatId', chatId);
+  store.commit('chats/correctTheChatId', chatId);
 }
 
 export const deleteAllChats = () => {

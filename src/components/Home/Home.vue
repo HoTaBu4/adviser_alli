@@ -29,6 +29,7 @@ const user: User = store.state.user.user
 const chats: ChatsState = store.state.chats
 const selectedChat:SelectedChatState = store.state.selectedChat
 
+
 const handleResize = () => {
   windowWidth.value = window.innerWidth;
 };
@@ -73,6 +74,11 @@ onBeforeUnmount(() => {
 const handleOpenModal = (type: string) => {
   isOpenModal.value = type;
 }
+
+if (selectedChat.selecedSaveMessage  !== null || selectedChat.selectedChat !== null) {
+  selectedtheme.value = null
+}
+
 </script>
 
 <template>
@@ -101,8 +107,12 @@ const handleOpenModal = (type: string) => {
           <Transition name="menu">
             <div class="profile" v-if="isOpenMenu">
               <div class="profile__menu">
-                <div class="profile__menu-item" @click="handleOpenModal('settings')">Settings</div>
-                <div class="profile__menu-item" @click="handleOpenModal('account')">Accaunt</div>
+                <div class="profile__menu-item" @click="handleOpenModal('settings')">
+                  {{Settings}}
+                </div>
+                <div class="profile__menu-item" @click="handleOpenModal('account')">
+                  Account
+                </div>
               </div>
             </div>
           </Transition>
@@ -168,7 +178,7 @@ const handleOpenModal = (type: string) => {
           v-if="!user.isGuest
             && selectedtheme !== null 
             && selectedChat.selectedChat === null
-            && selectedChat.selecedSaveMessage !== null"
+            && selectedChat.selecedSaveMessage === null"
           :theme="selectedtheme"
           :newCreatedChat="true"
           :selectedChat
@@ -177,18 +187,20 @@ const handleOpenModal = (type: string) => {
           :selectedtheme
         />
         <Chat 
-          v-if="user.isGuest && selectedThemeGuest !== null"
+          v-else-if="!user.isGuest 
+            && selectedChat.selectedChat !== null
+            || selectedChat.selecedSaveMessage !== null"
+          :selectedChat
+          :guestChat="false"
+          @shoseTheme="isOpenSelectTheme = true"
+        />
+        <Chat 
+          v-else-if="user.isGuest && selectedThemeGuest !== null"
           :guestChatId="createdChatId"
           :guestChat="true"
           :selectedThemeGuest="selectedThemeGuest"
         />
-        <Chat 
-          v-if="!user.isGuest && selectedChat.selectedChat !== null || selectedChat.selecedSaveMessage !== null"
-          :selectedChat
-          :guestChat="false"
-          :selectedMessage="selectedChat.selecedSaveMessage"
-          @shoseTheme="isOpenSelectTheme = true"
-        />
+        
       </div>
     </main>
   </div>

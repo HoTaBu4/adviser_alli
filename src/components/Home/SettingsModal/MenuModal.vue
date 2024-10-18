@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, reactive} from 'vue';
+import { computed, onMounted, onUnmounted, reactive} from 'vue';
 import InputField from '../../CommonComponents/InputField/InputField.vue';
 import { useLanguage } from '../../../assets/hooks/useLanguage';
 import { Languages } from '../../../store/types/LanguageType';
@@ -81,9 +81,12 @@ onUnmounted(() => {
   document.removeEventListener('click', handleOutsideClick);
 })
 
+const settingsTitle = computed(() => 
+  language.value === Languages.us ? 'SETTINGS :' : 'НАЛАШТУВАННЯ :'
+);
 
-const settgingsTitle = language.value === Languages.us ? 'SETTINGS :' : 'НАЛАШТУВАННЯ :';
 const accountTitle = language.value === Languages.us ? 'YOUR ACCOUNT :' : 'ТВІЙ АККАУНТ :';
+
 </script>
 
 <template>
@@ -95,7 +98,7 @@ const accountTitle = language.value === Languages.us ? 'YOUR ACCOUNT :' : 'ТВ�
         <img src="/pictures/icons/mobile_close.svg" alt="" class="menu-modal__close-img" @click="handleClose">
       </div>
       <div class="menu-modal__title">
-        {{type === 'settings' ? settgingsTitle : accountTitle }}
+        {{type === 'settings' ? settingsTitle : accountTitle }}
       </div>
       <div class="menu-modal__settigns" v-if="type === 'settings'">
         <div class="menu-modal__language">
@@ -133,7 +136,7 @@ const accountTitle = language.value === Languages.us ? 'YOUR ACCOUNT :' : 'ТВ�
             v-model="info.password.text"
             :error="info.password.error"
             :placeholder="language === Languages.us ? 'password' : `пароль`"
-            :name="'password'"
+            name="password"
             :isStatic="true"
             :labelText="language === language.us ? 'password' : `пароль`"
             :labelColor="true"
@@ -142,7 +145,7 @@ const accountTitle = language.value === Languages.us ? 'YOUR ACCOUNT :' : 'ТВ�
             v-model="info.password.text"
             :error="info.password.error"
             :placeholder="language === Languages.us ? 'password' : ` повторити пароль`"
-            :name="'repeat password'"
+            name="repeat password"
             :isStatic="true"
             :labelText="language === language.us ? 'password' : `  повторити пароль`"
             :labelColor="true"
@@ -150,10 +153,10 @@ const accountTitle = language.value === Languages.us ? 'YOUR ACCOUNT :' : 'ТВ�
         </div>
         <div class="menu-modal__buttons">
           <button class="menu-modal__save" @click="handleSubmit">
-            {{ language === Languages.uk ? 'SAVE' : 'ЗБЕРЕГТИ'}}
+            {{ language === Languages.us ? 'SAVE' : 'ЗБЕРЕГТИ'}}
           </button>
           <button class="menu-modal__log-out" @click="logout()">
-            {{language === Languages.uk ? 'log out' : 'ВИЙТИ'}}
+            {{language === Languages.us ? 'log out' : 'ВИЙТИ'}}
           </button>
         </div>
       </div>

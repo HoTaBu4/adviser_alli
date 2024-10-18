@@ -24,7 +24,6 @@ const props = defineProps({
     required: false,
   }
 });
-console.log(props.savedMessage)
 
 const store = useStore<RootState>();
 
@@ -44,7 +43,8 @@ const handleDeleteItem = () => {
     deleteChat(props.chat?.id);
     getSavedMessages();
     if (selectedChat.selectedChat?.id === props.chat?.id) {
-      store.commit('selectedChat/reset');
+      store.commit('selectedChat/resetChatAndSavedMessage');
+      console.log(selectedChat)
       if (chats.chats.length !== 0) {
         // store.commit('selectedChat/')
       }

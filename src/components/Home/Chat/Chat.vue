@@ -28,10 +28,6 @@ const props = defineProps({
   selectedtheme: {
     type: Number,
   },
-  selectedMessage : {
-    type:Object as PropType<SavedMessage>,
-    default: null
-  },
 })
 
 const emit = defineEmits(['guestQuestion','shoseTheme']);
@@ -42,6 +38,8 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const maxRows = ref<number>(5);
 const chatsItems = ref<Message[]>([]);
 const createdChatUser = ref<Chat | null>(null);
+
+console.log(props.selectedChat)
 
 function autoResize() {
   const textarea = textareaRef.value;
@@ -62,7 +60,7 @@ function autoResize() {
 }
 
 const handleSubmit = () => {
-  if (!props.selectedMessage) {
+  if (!props.selectedChat?.selecedSaveMessage) {
     if (props.guestChat && !!props.guestChatId) {
     
     const lastIndex = chatsItems.value.length
@@ -168,7 +166,7 @@ onMounted(() => {
         :item
         :key="item.id"
         :isLastMessage="index === chatsItems.length - 1"
-        :chatId="props.selectedChat?.selectedChat?.id" 
+        :chatId="props.selectedChat?.selectedChat?.id"
       />
       <ChatItem
         v-if="guestChat"
@@ -180,14 +178,14 @@ onMounted(() => {
 
       <!-- for the savedMessage -->
       <ChatItem 
-        v-if="selectedMessage"
-        :selectedMessage="selectedMessage.user_request"
+        v-if="selectedChat?.selecedSaveMessage"
+        :selectedMessage="selectedChat?.selecedSaveMessage.user_request"
         :savedMessage="selectedChat?.selecedSaveMessage?.user_request"
         :isAiResponse="false"
       />
       <ChatItem 
-        v-if="selectedMessage"
-        :selectedMessage="selectedMessage.user_request"
+        v-if="selectedChat?.selecedSaveMessage"
+        :selectedMessage="selectedChat?.selecedSaveMessage.user_request"
         :savedMessage="selectedChat?.selecedSaveMessage?.ai_response"
         :isAiResponse="true"
       />

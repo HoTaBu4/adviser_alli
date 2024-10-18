@@ -8,6 +8,7 @@ import { FieldsTypes } from "../../assets/types/fieldTypes";
 import { AuthenticationTypes } from "../../assets/types/AuthenticationType";
 import { authorizationUser, registationUser } from "../../store/modules/user";
 import store from "../../store/store";
+import GoogleAuthentication from "./GoogleAuthentication/GoogleAuthentication.vue";
 
 let data = reactive({
     email: {
@@ -36,6 +37,7 @@ const { language } = useLanguage();
 const isLogin = ref(false);
 const currentField = ref(FieldsTypes.email);
 const lastField = ref(FieldsTypes.email);
+const clientId = ref('')
 
 // const fieldOrder = [FieldsTypes.email, FieldsTypes.password, FieldsTypes.username];
 const fieldOrder = [FieldsTypes.email, FieldsTypes.password];
@@ -249,6 +251,15 @@ const validatePassword = () => {
           {{ language === Languages.us ? "continue" : "продовжити" }}
         </button>
       </form>
+      <div class="authentication__forgot-password">
+        <RouterLink 
+          class="authentication__forgot-password--button"
+          :to="{ name: 'forgotPassword'}" 
+        >
+          {{ language === Languages.us ? "forgot the password?" : "забули пароль?" }}
+        </RouterLink>
+      </div>
+      
       <div class="authentication__register-block">
         <div class="authentication__register-text" >
           {{language === Languages.us ? `don&#39;t have an accaunt?` : 'немає акаунта?'}}
@@ -278,29 +289,7 @@ const validatePassword = () => {
         <div class="authentication__or--line"></div>
       </div>
       <div class="authentication__social-networks">
-        <button class="authentication__google">
-          <div>
-            <div id="g_id_onload"
-                :data-client_id="clientId"
-                data-callback="handleCredentialResponse"
-                data-auto_prompt="false">
-            </div>
-            <div class="g_id_signin" 
-                data-type="standard"
-                data-size="large"
-                data-theme="outline"
-                data-text="signin_with"
-                data-shape="rectangular"
-                data-logo_alignment="center">
-            </div>
-          </div>
-          <img src="/pictures/icons/google__icon.svg" alt="Google Icon" />
-          {{
-            language === Languages.us
-              ? "Register with Google"
-              : "зареєструватися з Google"
-          }}
-        </button>
+        <GoogleAuthentication />
       </div>
     </div>
   </div>

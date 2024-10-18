@@ -15,3 +15,7 @@ export interface Chat {
   is_saved: boolean,
   messages: Message[],
 }
+
+export interface responseDetails {
+  details: string
+}

@@ -1,5 +1,6 @@
 export enum FieldsTypes {
   email = 'email',
   password = 'password',
-  username = 'username'
+  username = 'username',
+  emailreset = 'emailReset'
 }

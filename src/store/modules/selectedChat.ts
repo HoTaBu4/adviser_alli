@@ -1,7 +1,7 @@
 import { Module } from "vuex";
 import store, { RootState } from "../store";
 import { LanguageState } from "../types/LanguageType";
-import { Chat } from "../types/ChatType";
+import { Chat, responseDetails } from "../types/ChatType";
 import { retrieveChat } from "../../api/chats/chats";
 import { createMessageByUser, getSavedMassage } from "../../api/messages/messages";
 import { AiResponseMessage, Message, SavedMessage } from "../types/MessagesType";
@@ -49,7 +49,7 @@ const mutations = {
         'is_ai_response': false
       }
 
-      state.selectedChat.messages.push(obj)
+      state.selectedChat.messages.push(obj);
     }
   },
   addAiResponse (state:SelectedChatState,response: AiResponseMessage) {
@@ -62,10 +62,14 @@ const mutations = {
       })
   },
   reset(state: SelectedChatState) {
-    const defaultState = getDefaultState();
-    state.selectedChat = defaultState.selectedChat;
-    state.isLoading = defaultState.isLoading;
-    console.log(state);
+    state = getDefaultState();
+    // state.selectedChat = defaultState.selectedChat;
+    // state.isLoading = defaultState.isLoading;
+    // console.log(state);
+  },
+  resetChatAndSavedMessage(state: SelectedChatState) {
+    state.selectedChat = null;
+    state.selecedSaveMessage = null;
   },
   saveUnsaveSpesificMessage (state: SelectedChatState,payload:{ messageId: number, value: boolean }) {
     state.selectedChat?.messages.forEach((element: Message) => {
@@ -81,8 +85,8 @@ const actions = {
     commit('setLoading', true);
 
     retrieveChat(chatId)
-      .then((response:Chat) => {
-        if (!response.details) {
+      .then((response:Chat | responseDetails) => {
+        if (!('details' in response)) {
           commit('setSelectedChat', {...response,'id': chatId})
         }
       })
@@ -111,17 +115,6 @@ const actions = {
         commit('setIsAiTyping',true);
       })
   },
-  async getSavedMessage ({commit}: any, messageId: number) {
-    commit('setLoading', true);
-
-    getSavedMassage(messageId)
-      .then((response) => {
-
-      })
-      .finally(() =>{
-        commit('setLoading', false);
-      })
-  }
 };
 
 const language: Module<LanguageState, RootState> = {

@@ -10,6 +10,7 @@
   &__form {
     position: relative;
     overflow: hidden;
+    margin-bottom: 8px;
   }
 
   &__email-block {
@@ -36,6 +37,22 @@
     margin-top: 135px;
     &:hover {
       background-color: white;
+    }
+  }
+
+  &__forgot-password {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+    &--button  {
+      color: white;
+      padding: 4px 0;
+      border-bottom: 1px solid white;
+      font-size: 17px;
+      font-family: Inter,sans-serif;
+      font-weight: 300;
+      line-height: 28px;
+      letter-spacing: 3px;
     }
   }
   
@@ -136,35 +153,5 @@
     & > :not(:last-child) {
       margin-bottom: 24px;
     }
-  }
-  &__facebook,
-  &__google,
-  &__iphone {
-    padding: 0 50px;
-    text-align: left;
-    height: 74px;
-    display: flex;
-    border-radius: 50px;
-    align-items: center;
-    gap: 14px;
-    border: 0;
-    cursor: pointer;
-    font-size: 20px;
-    font-family: Roboto, sans-serif;
-    font-weight: 500;
-  }
-
-  &__facebook {
-    background-color: #1877f2;
-  }
-
-  &__google {
-    background-color: white;
-    color: #757575;
-  }
-
-  &__iphone {
-    background-color: black;
-    color: white;
   }
 }

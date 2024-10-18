@@ -1,5 +1,12 @@
 <script lang="ts" setup>
+import { useStore } from "vuex";
 import Header from "../CommonComponents/Header/Header.vue";
+import { client } from "../../api/fetchClient";
+
+const store = useStore();
+
+const user = store.user;
+console.log(client.get('/user/me').then((data) => console.log(data)))
 </script>
 
 <template>
